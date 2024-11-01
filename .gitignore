@@ -2,7 +2,8 @@
 env/
 database/
 .env
-.txt
+*.txt
+
 # Ignore Python cache files
 __pycache__/
 *.pyc
