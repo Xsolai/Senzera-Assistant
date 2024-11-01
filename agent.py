@@ -5,6 +5,9 @@ import os
 import json
 from typing import List, Dict, Any, Optional
 from appointment_tools import cancel_appointment, confirm_appointment, fetch_my_appointments, get_employees, get_sites, get_product, get_suggestions
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class AssistantManager:
     def __init__(self, api_key: str, assistant_id: str):
