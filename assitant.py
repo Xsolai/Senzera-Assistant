@@ -1,5 +1,8 @@
 import os
 from agent import AssistantManager
+from dotenv import load_dotenv
+
+load_dotenv()
 
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:

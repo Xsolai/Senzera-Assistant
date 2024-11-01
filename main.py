@@ -11,6 +11,8 @@ from fastapis import run_fastapi
 # Load environment variables from .env file
 load_dotenv()
 
+app = Flask(__name__)
+
 class WhatsAppHandler:
     def __init__(self):
         """
@@ -39,53 +41,33 @@ class WhatsAppHandler:
         print(f"Message sent: {message.status}")
         return message.sid
 
-    def start_incoming_listener(self, host="0.0.0.0", port=5000):
-        """
-        Starts a Flask server to listen for incoming WhatsApp messages.
-        
-        :param host: The host IP address.
-        :param port: The port number to listen on.
-        """
-        app = Flask(__name__)
+# Initialize WhatsApp handler
+whatsapp_handler = WhatsAppHandler()
 
-        @app.route('/incoming-whatsapp', methods=['POST'])
-        def receive_message():
-            """
-            Webhook to receive WhatsApp messages via Twilio.
-            Responds with the same message text (echo).
-            """
-            incoming_msg = request.values.get('Body', '').lower()  # The incoming message body
-            sender_number = request.values.get('From', '')  # Sender's WhatsApp number
 
-            # Log the incoming message
-            print(f"Message received from {sender_number}: {incoming_msg}")
-            number = ''.join(filter(str.isdigit, sender_number))
-            #Give msg from here to groq
-            response=get_response_from_gpt(incoming_msg, number)
-            #send response back to incoming msg
-            # Create a response that echoes the incoming message
-            resp = MessagingResponse()
-            resp.message(response)  # Respond with the same message text
+@app.route('/incoming-whatsapp', methods=['POST'])
+def receive_message():
+    """
+    Webhook to receive WhatsApp messages via Twilio.
+    Responds with the same message text (echo).
+    """
+    incoming_msg = request.values.get('Body', '').lower()  # The incoming message body
+    sender_number = request.values.get('From', '')  # Sender's WhatsApp number
 
-            return str(resp) # Respond to Twilio's webhook with the message
+    # Log the incoming message
+    print(f"Message received from {sender_number}: {incoming_msg}")
+    number = ''.join(filter(str.isdigit, sender_number))
+    #Give msg from here to groq
+    response=get_response_from_gpt(incoming_msg, number)
+    #send response back to incoming msg
+    # Create a response that echoes the incoming message
+    resp = MessagingResponse()
+    resp.message(response)  # Respond with the same message text
 
-        print(f"Starting WhatsApp listener on {host}:{port}...")
-        app.run(host=host, port=port)
+    return str(resp) # Respond to Twilio's webhook with the message
+
         
 
 if __name__  == '__main__':
-    
-    # Initialize the handler
-    whatsapp_handler = WhatsAppHandler()
+    app.run(host="0.0.0.0", port=5000)
 
-    # Start Flask and FastAPI servers in separate threads
-    flaskapp_thread = Thread(target=whatsapp_handler.start_incoming_listener, kwargs={"host": "0.0.0.0", "port": 5000})
-    fastapi_thread = Thread(target=run_fastapi)
-    
-    # Start the threads
-    flaskapp_thread.start()
-    # fastapi_thread.start()
-
-    # Wait for both threads to complete
-    flaskapp_thread.join()
-    # fastapi_thread.join()
