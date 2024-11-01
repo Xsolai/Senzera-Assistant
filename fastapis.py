@@ -1,6 +1,7 @@
 import datetime
 from fastapi import FastAPI 
 import sqlite3
+import uvicorn
 
 app = FastAPI()
 
@@ -13,6 +14,10 @@ def create_connection():
     except sqlite3.Error as e:
         print(f"Error connecting to database: {e}")
         return None
+
+@app.get("/")
+def fastapi_home():
+    return {"message": "Hello from FastAPI"}
 
 @app.get("/total_booked_services")
 def get_total_booked_services():
@@ -265,3 +270,8 @@ def update_appointment_status():
             conn.close()
 
 # Run the app using: uvicorn filename:app --reload
+
+
+# Function to run FastAPI using Uvicorn
+def run_fastapi():
+    uvicorn.run(app, host="127.0.0.1", port=8000)

@@ -1,9 +1,15 @@
 import os
-from main import OpenAIAssistant, assistant
+from agent import AssistantManager
 
-assistant_interface = OpenAIAssistant(os.getenv("OPENAI_API_KEY"), assistant.id)
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    print("Error: OPENAI_API_KEY environment variable not set")
 
-def get_response_from_gpt(msg):
-    
-    respone = assistant_interface.process_input(msg)
-    return respone
+
+assistant_id = os.getenv("ASSITANT_ID")
+assistant_manager = AssistantManager(api_key, assistant_id)
+
+def get_response_from_gpt(msg, user_id):
+    response = assistant_manager.run_conversation(user_id, msg)
+    print(f"Response for user {user_id}: {response}")
+    return response

@@ -53,7 +53,27 @@ CREATE TABLE IF NOT EXISTS StudioLocation (
     price_mittel_with_card REAL,
     price_munich_with_card REAL
 );
+''',
+'AvailableStaff':''' CREATE TABLE IF NOT EXISTS AvailableStaff (
+    staff_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    employee_id INTEGER NOT NULL,
+    employee_name TEXT NOT NULL,
+    studio_id INTEGER NOT NULL,
+    available_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id),
+    FOREIGN KEY (studio_id) REFERENCES StudioLocation(studio_id)
+);
+''',
+'Employees' : '''CREATE TABLE IF NOT EXISTS Employees (
+    employee_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    employee_name TEXT NOT NULL,
+    contact TEXT,
+    role TEXT
+);
 '''
+
 }
 
 def connect_and_create_tables():
@@ -86,7 +106,27 @@ def insert_sample_data():
     #     (3, 'Cologne', 'Bikini classic', 103, 'Sofia', '2023-10-05', '16:30:00', True),
     #     (4, 'Cologne', 'Bikini classic', 101, 'Anna', '2023-10-05', '14:00:00', False)
     # ]
-    
+    october_data = [
+    (1, 'Cologne', 'Bikini classic', 101, 'Anna', '2024-10-28', '09:00:00', True),
+    (2, 'Cologne', 'Bikini classic', 102, 'Maria', '2024-10-29', '10:30:00', True),
+    (3, 'Cologne', 'Bikini classic', 103, 'Sofia', '2024-10-30', '11:00:00', True),
+    (4, 'Cologne', 'Bikini classic', 104, 'Julia', '2024-10-31', '12:00:00', True),
+      (5, 'Cologne', 'Bikini classic', 105, 'Emma', '2024-11-01', '09:30:00', True),
+    (6, 'Cologne', 'Bikini classic', 106, 'Olivia', '2024-11-03', '10:00:00', True),
+    (7, 'Cologne', 'Bikini classic', 107, 'Sophia', '2024-11-05', '11:15:00', True),
+    (8, 'Cologne', 'Bikini classic', 108, 'Mia', '2024-11-08', '12:45:00', True),
+    (9, 'Cologne', 'Bikini classic', 109, 'Lily', '2024-11-10', '09:00:00', True),
+    (10, 'Cologne', 'Bikini classic', 110, 'Chloe', '2024-11-12', '10:30:00', True),
+    (11, 'Cologne', 'Bikini classic', 111, 'Zoe', '2024-11-14', '11:30:00', True),
+    (12, 'Cologne', 'Bikini classic', 112, 'Ella', '2024-11-16', '12:00:00', True),
+    (13, 'Cologne', 'Bikini classic', 113, 'Ava', '2024-11-18', '09:30:00', True),
+    (14, 'Cologne', 'Bikini classic', 114, 'Luna', '2024-11-20', '10:00:00', True),
+    (15, 'Cologne', 'Bikini classic', 115, 'Lea', '2024-11-22', '11:00:00', True),
+    (16, 'Cologne', 'Bikini classic', 101, 'Anna', '2024-11-25', '09:00:00', True),
+    (17, 'Cologne', 'Bikini classic', 102, 'Maria', '2024-11-27', '10:30:00', True),
+    (18, 'Cologne', 'Bikini classic', 103, 'Sofia', '2024-11-29', '11:00:00', True),
+    (19, 'Cologne', 'Bikini classic', 104, 'Julia', '2024-11-30', '12:00:00', True)
+]
 #     data = [
 #         ('Senzera Studio', 'Berlin', 'Alexanderplatz 1, 10178 Berlin'),
 # ('Senzera Studio', 'Hamburg', 'Mönckebergstraße 7, 20095 Hamburg'),
@@ -96,11 +136,11 @@ def insert_sample_data():
 #                        INSERT INTO StudioLocation (studio_name, city, address) VALUES (?, ?, ?)
 #                        ''',data )
     
-    # cursor.executemany('''
-    #     INSERT INTO ServiceAvailability (
-    #         id, studio_location, service_name, employee_id, employee_name, appointment_date, appointment_time, is_available
-    #     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    # ''', sample_data)
+    cursor.executemany('''
+        INSERT INTO ServiceAvailability (
+            id, studio_location, service_name, employee_id, employee_name, appointment_date, appointment_time, is_available
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ''', october_data)
     
     # services_list = [
     #     ('Oberschenkel', 'Sugaring', 39.0, 40.0, 31.0, 31.0),

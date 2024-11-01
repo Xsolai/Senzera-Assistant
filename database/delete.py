@@ -32,6 +32,6 @@ def delete_tables(table_names):
             conn.close()
 
 if __name__ == "__main__":
-    # Provide the table names you want to delete
-    tables_to_delete = ['Appointment_old', 'Appointment_old1', 'Appointment']
+    # Provide the table names you want to deleteclear
+    tables_to_delete = ['Services']
     delete_tables(tables_to_delete)

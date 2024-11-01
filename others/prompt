@@ -1,0 +1,5 @@
+
+Calendar Information:
+Todays Date: {datetime.today()}
+This Month Calender from today: {[(datetime.today() + timedelta(days=i)).strftime('%Y-%m-%d')
+                   for i in range((datetime(datetime.today().year, datetime.today().month % 12 + 1, 1) - datetime.today()).days)]}

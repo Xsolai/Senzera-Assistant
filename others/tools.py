@@ -70,7 +70,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "get_suggestions",
-            "description": "Retrieve a list of available appointment dates and times for a specific service at a specific studio location.",
+            "description": "Retrieve a list of available appointment dates and times for a specific service at a specific studio location on specific date.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -81,9 +81,13 @@ tools = [
                     "service_name": {
                         "type": "string",
                         "description": "The name of the service to be performed."
+                    },
+                     "date": {
+                        "type": "string",
+                        "description": "The date of the appointment"
                     }
                 },
-                "required": ["city", "service_name"]
+                "required": ["city", "service_name", "date"]
             }
         }
     },
@@ -119,10 +123,10 @@ tools = [
                         "type": "string",
                         "description": "The time of the appointment in 'HH:MM:SS' format."
                     },
-                    "service_price":{
-                        "type": "integer",
-                        "description": "the price of of service price category"
-                    }
+                    # "service_price":{
+                    #     "type": "integer",
+                    #     "description": "the price of of service price category"
+                    # }
                 },
                 "required": [
                     "customer_name", 
