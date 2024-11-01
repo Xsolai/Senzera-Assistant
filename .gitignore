@@ -1,6 +1,7 @@
 # Ignore environment folder and files
 env/
 database/
+.env
 
 # Ignore Python cache files
 __pycache__/
