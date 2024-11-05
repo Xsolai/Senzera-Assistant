@@ -6,7 +6,7 @@ import os
 import json
 from dotenv import load_dotenv
 
-from tools.tools import create_profile
+from tools.tools import check_profile, create_profile, update_profile
 
 load_dotenv()
 
@@ -124,13 +124,17 @@ class AssistantManager:
             try:
                 function_name = tool_call.function.name
                 arguments = json.loads(tool_call.function.arguments)
+                print(f"Function: {function_name} Arguments: {arguments}")
                 
                 function_mapping = {
-                    "create_profile": lambda: create_profile(arguments.get('name'), user_id),
+                    "create_profile": lambda: create_profile(arguments.get('name'), arguments.get('gdpr_consent'), user_id),
+                    "check_profile": lambda: check_profile(user_id),
+                    "update_profile": lambda: update_profile(arguments.get('gdpr_consent'), user_id)
                 }
                 
                 if function_name in function_mapping:
                     result = function_mapping[function_name]()
+                    print(result)
                 else:
                     result = {"error": f"Function {function_name} not implemented"}
                 

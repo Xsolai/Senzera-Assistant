@@ -12,7 +12,8 @@ def init_db():
             CREATE TABLE IF NOT EXISTS profiles (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id TEXT UNIQUE NOT NULL,
-                name TEXT UNIQUE NOT NULL
+                name TEXT UNIQUE NOT NULL,
+                gdpr_consent BOOLEAN NOT NULL
             )
         """)
         conn.commit()
