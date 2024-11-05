@@ -3,7 +3,7 @@ from openai import OpenAI
 import os
 import json
 from typing import List, Dict, Any
-from appointment_tools import cancel_appointment, confirm_appointment, get_employees, get_sites, get_product, get_suggestions #, get_employees, get_products, get_product, book_appointment
+from v1.appointment_tools import cancel_appointment, confirm_appointment, get_employees, get_sites, get_product, get_suggestions #, get_employees, get_products, get_product, book_appointment
 
 
 class AssistantManager:

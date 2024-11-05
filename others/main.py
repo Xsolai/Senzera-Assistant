@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from tools import tools
 
 # Implement the functions
-from appointment_tools import cancel_appointment, confirm_appointment, get_employees, get_sites, get_product, get_suggestions #, get_employees, get_products, get_product, book_appointment
+from v1.appointment_tools import cancel_appointment, confirm_appointment, get_employees, get_sites, get_product, get_suggestions #, get_employees, get_products, get_product, book_appointment
 import logging; 
 
 #logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')

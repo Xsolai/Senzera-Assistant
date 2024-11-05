@@ -1,6 +1,8 @@
 # Ignore environment folder and files
 env/
 database/
+others/
+v1/
 .env
 *.txt
 

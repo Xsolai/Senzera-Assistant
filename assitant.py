@@ -1,5 +1,5 @@
 import os
-from agent import AssistantManager
+from new_agent import AssistantManager
 from dotenv import load_dotenv
 
 load_dotenv()
