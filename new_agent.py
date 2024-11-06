@@ -6,7 +6,7 @@ import os
 import json
 from dotenv import load_dotenv
 
-from tools.tools import check_profile, create_profile, update_profile
+from tools.tools import check_profile, create_profile
 
 load_dotenv()
 
@@ -128,8 +128,7 @@ class AssistantManager:
                 
                 function_mapping = {
                     "create_profile": lambda: create_profile(arguments.get('name'), arguments.get('gdpr_consent'), user_id),
-                    "check_profile": lambda: check_profile(user_id),
-                    "update_profile": lambda: update_profile(arguments.get('gdpr_consent'), user_id)
+                    "check_profile": lambda: check_profile(user_id)
                 }
                 
                 if function_name in function_mapping:
