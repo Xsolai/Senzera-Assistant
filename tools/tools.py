@@ -1,5 +1,5 @@
 import sqlite3
-
+import re
 DATABASE_PATH = 'instance/database.db'
 
 def create_profile(name, user_id=None, gdpr_consent=False):
@@ -31,25 +31,8 @@ def create_profile(name, user_id=None, gdpr_consent=False):
     except Exception as e:
         return {"success": False, "error": str(e)}, 500
 
-# def check_profile(user_id):
-#     """
-#     Checks if a profile exists for the given user_id in the profiles database.
-
-#     Parameters:
-#     - user_id (str): The unique identifier of the user to look up.
-
-#     Returns:
-#     - tuple or None: Returns a tuple containing the profile data if the profile exists, 
-#       otherwise returns None if no profile is found.
-    
-#     The returned tuple format:
-#     (id, user_id, name, gdpr_consent)
-#     """
-#     with sqlite3.connect(DATABASE_PATH) as conn:
-#         cursor = conn.cursor()
-#         cursor.execute("SELECT * FROM profiles WHERE user_id = ?", (user_id,))
-#         profile = cursor.fetchone()
-#     return profile
+def replace_double_with_single_asterisks(text):
+    return re.sub(r'\*\*(.*?)\*\*', r'*\1*', text)
 
 
 def check_profile(user_id):
