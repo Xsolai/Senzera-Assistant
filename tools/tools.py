@@ -75,68 +75,60 @@ def check_profile(user_id):
         profile = cursor.fetchone()
     
     if profile:
-        name, gdpr_consent = profile
-        if gdpr_consent:
-            return {
-                "message": f"Welcome back, {name}! How can I assist you today?",
-                "assist": True,
-                "name": name
-            }
-        else:
-            return {
-                "message": f"Hello, {name}. To proceed, please provide your GDPR consent.",
-                "assist": False,
-                "name": name
-            }
-    
+        name = profile
+        return {
+            "message": f"Welcome back, {name}! How can I assist you today?",
+            "assist": True,
+            "name": name
+        }    
     # If no profile is found
     return {
-        "message": "Hello! Please provide your GDPR consent to proceed with creating a profile.",
+        "message": "There is no profile for this user.",
         "assist": False
     }
     
 
-def update_profile(gdpr_consent, user_id):
-    """
-    Updates the GDPR consent status in the profiles database for a specific user.
+# def update_profile(gdpr_consent, user_id):
+#     """
+#     Updates the GDPR consent status in the profiles database for a specific user.
 
-    Parameters:
-    - user_id (str): The unique identifier of the user.
-    - gdpr_consent (bool): The new GDPR consent status to be set.
+#     Parameters:
+#     - user_id (str): The unique identifier of the user.
+#     - gdpr_consent (bool): The new GDPR consent status to be set.
 
-    Returns:
-    - dict: A response indicating success or failure of the update operation.
-      - If the profile is updated successfully:
-        - "success" (bool): True
-        - "message" (str): Confirmation message
-      - If no profile with the specified user_id exists:
-        - "success" (bool): False
-        - "error" (str): Error message explaining that the profile does not exist.
-    """
-    try:
-        with sqlite3.connect(DATABASE_PATH) as conn:
-            cursor = conn.cursor()
-            # Update GDPR consent status
-            cursor.execute(
-                "UPDATE profiles SET gdpr_consent = ? WHERE user_id = ?",
-                (gdpr_consent, user_id)
-            )
-            conn.commit()
+#     Returns:
+#     - dict: A response indicating success or failure of the update operation.
+#       - If the profile is updated successfully:
+#         - "success" (bool): True
+#         - "message" (str): Confirmation message
+#       - If no profile with the specified user_id exists:
+#         - "success" (bool): False
+#         - "error" (str): Error message explaining that the profile does not exist.
+#     """
+#     try:
+#         with sqlite3.connect(DATABASE_PATH) as conn:
+#             cursor = conn.cursor()
+#             # Update GDPR consent status
+#             cursor.execute(
+#                 "UPDATE profiles SET gdpr_consent = ? WHERE user_id = ?",
+#                 (gdpr_consent, user_id)
+#             )
+#             conn.commit()
 
-            # Check if any rows were affected to determine if the user_id exists
-            if cursor.rowcount == 0:
-                return {
-                    "success": False,
-                    "error": "Profile with this user_id does not exist."
-                }
+#             # Check if any rows were affected to determine if the user_id exists
+#             if cursor.rowcount == 0:
+#                 return {
+#                     "success": False,
+#                     "error": "Profile with this user_id does not exist."
+#                 }
             
-            return {
-                "success": True,
-                "message": "GDPR consent status updated successfully. Now Assist with queryies."
-            }
+#             return {
+#                 "success": True,
+#                 "message": "GDPR consent status updated successfully. Now Assist with queryies."
+#             }
     
-    except Exception as e:
-        return {
-            "success": False,
-            "error": f"An error occurred: {str(e)}"
-        }
+#     except Exception as e:
+#         return {
+#             "success": False,
+#             "error": f"An error occurred: {str(e)}"
+#         }
