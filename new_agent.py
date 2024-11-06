@@ -127,13 +127,13 @@ class AssistantManager:
                 print(f"Function: {function_name} Arguments: {arguments}")
                 
                 function_mapping = {
-                    "create_profile": lambda: create_profile(arguments.get('name'), arguments.get('gdpr_consent'), user_id),
+                    "create_profile": lambda: create_profile(arguments.get('name'),  user_id, arguments.get('gdpr_consent')),
                     "check_profile": lambda: check_profile(user_id)
                 }
                 
                 if function_name in function_mapping:
                     result = function_mapping[function_name]()
-                    print(result)
+                    print(result, "Number: ",user_id)
                 else:
                     result = {"error": f"Function {function_name} not implemented"}
                 
