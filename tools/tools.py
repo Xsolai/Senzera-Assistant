@@ -2,7 +2,7 @@ import sqlite3
 import re
 DATABASE_PATH = 'instance/database.db'
 
-def create_profile(name, user_id=None, gdpr_consent=False):
+def create_profile(name, user_id=None, gdpr_consent=False, gender=None):
     """
     Creates a profile with the provided name, user_id, and gdpr_consent if they don't already exist.
     
@@ -21,11 +21,11 @@ def create_profile(name, user_id=None, gdpr_consent=False):
         with sqlite3.connect(DATABASE_PATH) as conn:
             cursor = conn.cursor()
             cursor.execute(
-                "INSERT INTO profiles (user_id, name, gdpr_consent) VALUES (?, ?, ?)",
-                (user_id, name, gdpr_consent)
+                "INSERT INTO profiles (user_id, name, gdpr_consent, gender) VALUES (?, ?, ?, ?)",
+                (user_id, name, gdpr_consent, gender)
             )
             conn.commit()
-            return {"success": True, "message": "Profile created successfully.", "Name": name, "GDPR Consent": gdpr_consent}
+            return {"success": True, "message": "Profile created successfully.", "Name": name, "GDPR Consent": gdpr_consent, "gender":gender}
     except sqlite3.IntegrityError:
         return {"success": False, "error": "Profile with this name or user_id already exists."}, 409
     except Exception as e:
@@ -54,13 +54,14 @@ def check_profile(user_id):
     """
     with sqlite3.connect(DATABASE_PATH) as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT name, gdpr_consent FROM profiles WHERE user_id = ?", (user_id,))
+        cursor.execute("SELECT name, gdpr_consent, gender FROM profiles WHERE user_id = ?", (user_id,))
         profile = cursor.fetchone()
     
     if profile:
-        name = profile
+        name, _, gender = profile
         return {
             "message": f"Welcome back, {name}! How can I assist you today?",
+            "gender": gender,
             "assist": True,
             "name": name
         }    

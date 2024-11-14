@@ -13,7 +13,8 @@ def init_db():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id TEXT UNIQUE NOT NULL,
                 name TEXT UNIQUE NOT NULL,
-                gdpr_consent BOOLEAN NOT NULL
+                gdpr_consent BOOLEAN NOT NULL,
+                gender TEXT NOT NULL
             )
         """)
         conn.commit()

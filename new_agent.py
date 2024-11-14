@@ -127,7 +127,7 @@ class AssistantManager:
                 print(f"Function: {function_name} Arguments: {arguments}")
                 
                 function_mapping = {
-                    "create_profile": lambda: create_profile(arguments.get('name'),  user_id, arguments.get('gdpr_consent')),
+                    "create_profile": lambda: create_profile(arguments.get('name'),  user_id, arguments.get('gdpr_consent'), arguments.get('gender')),
                     "check_profile": lambda: check_profile(user_id)
                 }
                 
