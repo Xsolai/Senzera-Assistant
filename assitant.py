@@ -9,7 +9,7 @@ if not api_key:
     print("Error: OPENAI_API_KEY environment variable not set")
 
 
-assistant_id = os.getenv("ASSITANT_ID")
+assistant_id = os.getenv("ASSISTANT_ID")
 assistant_manager = AssistantManager(api_key, assistant_id)
 
 def get_response_from_gpt(msg, user_id):

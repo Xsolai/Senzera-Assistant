@@ -34,6 +34,11 @@ def create_profile(name, user_id=None, gdpr_consent=False, gender=None):
 def replace_double_with_single_asterisks(text):
     return re.sub(r'\*\*(.*?)\*\*', r'*\1*', text)
 
+def remove_sources(text):
+     # Use regex to match the pattern 【number:number†filename.extension】
+    clean_text = re.sub(r"【\d+:\d+†[^\s]+】", "", text)
+    # Remove any extra spaces left from the removal
+    return ' '.join(clean_text.split())
 
 def check_profile(user_id):
     """

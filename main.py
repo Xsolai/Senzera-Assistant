@@ -79,7 +79,7 @@ from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 from dotenv import load_dotenv
 from assitant import get_response_from_gpt
-from tools.tools import replace_double_with_single_asterisks
+from tools.tools import remove_sources, replace_double_with_single_asterisks
 
 # Load environment variables from .env file
 load_dotenv()
@@ -149,7 +149,8 @@ def receive_message():
     try:
         # Get response from the assistant function
         response = get_response_from_gpt(incoming_msg, number)
-        response =  replace_double_with_single_asterisks(response)
+        response =  remove_sources(replace_double_with_single_asterisks(response))
+
         logging.info(f"Response generated for {sender_number}: {response}")
     except Exception as e:
         logging.error(f"Error generating response for {sender_number}: {e}")
