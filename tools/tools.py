@@ -37,8 +37,7 @@ def replace_double_with_single_asterisks(text):
 def remove_sources(text):
      # Use regex to match the pattern 【number:number†filename.extension】
     clean_text = re.sub(r"【\d+:\d+†[^\s]+】", "", text)
-    # Remove any extra spaces left from the removal
-    return ' '.join(clean_text.split())
+    return clean_text
 
 def check_profile(user_id):
     """
