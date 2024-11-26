@@ -5,7 +5,13 @@ def remove_sources(text):
     # Remove any extra spaces left from the removal
     return ' '.join(clean_text.split())
 
+def remove_brackets(text):
+    # Use regex to find and remove square brackets and their content
+    return re.sub(r'\[.*?\]', '', text)
 
+def remove_small_brackets(text):
+    # Use regex to find and remove only the parentheses, but keep the content inside
+    return re.sub(r'[()]', '', text)
 
 text = """"
 
@@ -16,4 +22,4 @@ Die S-Card bietet dir 30 % Rabatt auf alle regulären Behandlungen und kostet 13
 Du kannst mehr über unsere Waxing-Dienstleistungen auf unserer [Service-Seite](https://senzera.com/behandlungen/professionelle-haarentfernung-durch-waxing/) erfahren. Buche jetzt deinen Termin, um von unseren Angeboten zu profitieren!
 """
 
-print(remove_sources(text))
+print(remove_small_brackets(remove_brackets(remove_sources(text))))

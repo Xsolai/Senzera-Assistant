@@ -31,6 +31,14 @@ def create_profile(name, user_id=None, gdpr_consent=False, gender=None):
     except Exception as e:
         return {"success": False, "error": str(e)}, 500
 
+def format_response(text):
+    final_response = replace_double_with_single_asterisks(text) #removing single * 
+    final_response = remove_sources(final_response) #removing sources if any
+    final_response = remove_brackets(final_response) # removing brackets before linke
+    final_response = remove_small_brackets(final_response) #removing small brackets from link
+    
+    return final_response
+    
 def replace_double_with_single_asterisks(text):
     return re.sub(r'\*\*(.*?)\*\*', r'*\1*', text)
 
@@ -38,6 +46,14 @@ def remove_sources(text):
      # Use regex to match the pattern 【number:number†filename.extension】
     clean_text = re.sub(r"【\d+:\d+†[^\s]+】", "", text)
     return clean_text
+
+def remove_brackets(text):
+    # Use regex to find and remove square brackets and their content
+    return re.sub(r'\[.*?\]', '', text)
+
+def remove_small_brackets(text):
+    # Use regex to find and remove only the parentheses, but keep the content inside
+    return re.sub(r'[()]', '', text)
 
 def check_profile(user_id):
     """
