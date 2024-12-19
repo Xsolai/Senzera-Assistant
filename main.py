@@ -158,7 +158,7 @@ def receive_message():
 
     # # Send the response back to the incoming message
     resp = MessagingResponse()
-    resp.message(response[0:1500])
+    resp.message(response[0:1000])
     logging.info(f"Responded to {sender_number} with: {response}")
 
     return str(resp)  # Respond to Twilio's webhook with the message
