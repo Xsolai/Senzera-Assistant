@@ -157,37 +157,11 @@ def receive_message():
         response = "I'm sorry, something went wrong while processing your message."
 
     # # Send the response back to the incoming message
-    # resp = MessagingResponse()
-    # resp.message(response)
-    # logging.info(f"Responded to {sender_number} with: {response}")
-    
-    # Set the chunk size limit
-    CHUNK_SIZE = 500
+    resp = MessagingResponse()
+    resp.message(response[0:1500])
+    logging.info(f"Responded to {sender_number} with: {response}")
 
-    # Initialize a list to store the chunks
-    message_chunks = []
-    current_chunk = ""
-
-    # Loop through each character and build chunks manually
-    for char in response:
-        if len(current_chunk) + len(char) <= CHUNK_SIZE:
-            current_chunk += char
-        else:
-            message_chunks.append(current_chunk)  # Add the full chunk to the list
-            current_chunk = char  # Start a new chunk with the current character
-
-    # Add the last chunk if any
-    if current_chunk:
-        message_chunks.append(current_chunk)
-
-    # Loop through each chunk and send it
-    for chunk in message_chunks:
-        resp = MessagingResponse()
-        resp.message(chunk)
-        logging.info(f"Responded to {sender_number} with: {chunk}")
-        time.sleep(0.25)
-
-        yield str(resp)  # Respond to Twilio's webhook with the message
+    return str(resp)  # Respond to Twilio's webhook with the message
 
 if __name__ == '__main__':
     logging.info("Starting Flask app...")
