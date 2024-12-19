@@ -187,7 +187,7 @@ def receive_message():
         logging.info(f"Responded to {sender_number} with: {chunk}")
         time.sleep(0.25)
 
-    return str(resp)  # Respond to Twilio's webhook with the message
+        yield str(resp)  # Respond to Twilio's webhook with the message
 
 if __name__ == '__main__':
     logging.info("Starting Flask app...")
