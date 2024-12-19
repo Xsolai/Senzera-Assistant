@@ -164,8 +164,21 @@ def receive_message():
     # Set the chunk size limit
     CHUNK_SIZE = 700
 
-    # Split the message into chunks
-    message_chunks = [response[i:i + CHUNK_SIZE] for i in range(0, len(response), CHUNK_SIZE)]
+    # Initialize a list to store the chunks
+    message_chunks = []
+    current_chunk = ""
+
+    # Loop through each character and build chunks manually
+    for char in response:
+        if len(current_chunk) + len(char) <= CHUNK_SIZE:
+            current_chunk += char
+        else:
+            message_chunks.append(current_chunk)  # Add the full chunk to the list
+            current_chunk = char  # Start a new chunk with the current character
+
+    # Add the last chunk if any
+    if current_chunk:
+        message_chunks.append(current_chunk)
 
     # Loop through each chunk and send it
     for chunk in message_chunks:
