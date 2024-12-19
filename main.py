@@ -70,7 +70,7 @@
 
 # if __name__  == '__main__':
 #     app.run(host="0.0.0.0", port=5000)
-
+import time
 import os
 import threading
 import logging
@@ -156,10 +156,23 @@ def receive_message():
         logging.error(f"Error generating response for {sender_number}: {e}")
         response = "I'm sorry, something went wrong while processing your message."
 
-    # Send the response back to the incoming message
-    resp = MessagingResponse()
-    resp.message(response)
-    logging.info(f"Responded to {sender_number} with: {response}")
+    # # Send the response back to the incoming message
+    # resp = MessagingResponse()
+    # resp.message(response)
+    # logging.info(f"Responded to {sender_number} with: {response}")
+    
+    # Set the chunk size limit
+    CHUNK_SIZE = 1550
+
+    # Split the message into chunks
+    message_chunks = [response[i:i + CHUNK_SIZE] for i in range(0, len(response), CHUNK_SIZE)]
+
+    # Loop through each chunk and send it
+    for chunk in message_chunks:
+        resp = MessagingResponse()
+        resp.message(chunk)
+        logging.info(f"Responded to {sender_number} with: {chunk}")
+        time.sleep(0.25)
 
     return str(resp)  # Respond to Twilio's webhook with the message
 
