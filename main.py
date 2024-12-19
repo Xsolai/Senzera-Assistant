@@ -162,7 +162,7 @@ def receive_message():
     # logging.info(f"Responded to {sender_number} with: {response}")
     
     # Set the chunk size limit
-    CHUNK_SIZE = 700
+    CHUNK_SIZE = 500
 
     # Initialize a list to store the chunks
     message_chunks = []
