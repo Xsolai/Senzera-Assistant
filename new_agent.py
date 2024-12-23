@@ -77,7 +77,7 @@ class AssistantManager:
                 run = self.client.beta.threads.runs.create(thread_id=thread_id, assistant_id=self.assistant_id)  # Synchronous
                 self.active_runs[thread_id] = run.id
                 
-                timeout = 60
+                timeout = 100
                 start_time = time.time()
                 backoff_interval = 1
                 max_backoff = 16
