@@ -1,6 +1,5 @@
 import datetime
 import time
-import asyncio
 from typing import Any, Dict, List
 from openai import OpenAI
 import os
@@ -19,31 +18,30 @@ class AssistantManager:
         self.user_threads: Dict[str, str] = {}  # Store thread IDs for each user
         self.active_runs: Dict[str, str] = {}  # Track active runs for each thread
 
-    async def get_or_create_thread(self, user_id: str) -> str:
+    def get_or_create_thread(self, user_id: str) -> str:
         """Get existing thread for user or create new one."""
         if user_id not in self.user_threads:
-            thread = await self.client.beta.threads.create()
+            thread = self.client.beta.threads.create()  # Synchronous call
             self.user_threads[user_id] = thread.id
         return self.user_threads[user_id]
 
-    async def cleanup_active_run(self, thread_id: str) -> None:
+    def cleanup_active_run(self, thread_id: str) -> None:
         """Clean up any existing active run for a thread."""
         if thread_id in self.active_runs:
             try:
                 run_id = self.active_runs[thread_id]
-                run = await self.client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
-                
+                run = self.client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)  # Synchronous
                 if run.status in ["queued", "in_progress", "requires_action"]:
-                    await self.client.beta.threads.runs.cancel(thread_id=thread_id, run_id=run_id)
+                    self.client.beta.threads.runs.cancel(thread_id=thread_id, run_id=run_id)  # Synchronous
             except Exception as e:
                 print(f"Error cleaning up run: {e}")
             finally:
                 del self.active_runs[thread_id]
 
-    async def add_message_to_thread(self, user_id: str, question: str) -> None:
+    def add_message_to_thread(self, user_id: str, question: str) -> None:
         """Add a message to the user's thread with active run check."""
-        thread_id = await self.get_or_create_thread(user_id)
-        await self.cleanup_active_run(thread_id)
+        thread_id = self.get_or_create_thread(user_id)
+        self.cleanup_active_run(thread_id)
         
         current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         question = f"{question}\n\n(Current Date and Time: {current_datetime})"
@@ -53,30 +51,30 @@ class AssistantManager:
 
         for attempt in range(max_retries):
             try:
-                await self.client.beta.threads.messages.create(thread_id=thread_id, role="user", content=question)
+                self.client.beta.threads.messages.create(thread_id=thread_id, role="user", content=question)  # Synchronous
                 return
             except Exception as e:
                 if attempt < max_retries - 1:
                     print(f"Retry {attempt + 1}/{max_retries} adding message: {e}")
-                    await asyncio.sleep(retry_delay)
+                    time.sleep(retry_delay)
                     retry_delay *= 2  # Exponential backoff
                 else:
                     raise
 
-    async def run_conversation(self, user_id: str, question: str) -> str:
+    def run_conversation(self, user_id: str, question: str) -> str:
         """Run a conversation turn with error handling and run status management."""
-        thread_id = await self.get_or_create_thread(user_id)
+        thread_id = self.get_or_create_thread(user_id)
         max_retries = 5
         retry_delay = 1
 
         for attempt in range(max_retries):
             try:
-                await self.cleanup_active_run(thread_id)
-                await asyncio.sleep(1)
-                await self.add_message_to_thread(user_id, question)
+                self.cleanup_active_run(thread_id)
+                time.sleep(1)
+                self.add_message_to_thread(user_id, question)
                 
                 # Start a new run
-                run = await self.client.beta.threads.runs.create(thread_id=thread_id, assistant_id=self.assistant_id)
+                run = self.client.beta.threads.runs.create(thread_id=thread_id, assistant_id=self.assistant_id)  # Synchronous
                 self.active_runs[thread_id] = run.id
                 
                 timeout = 60
@@ -85,19 +83,19 @@ class AssistantManager:
                 max_backoff = 16
 
                 while time.time() - start_time < timeout:
-                    run = await self.client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
+                    run = self.client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)  # Synchronous
                     if run.status == "completed":
                         del self.active_runs[thread_id]
-                        return await self.get_latest_assistant_response(user_id)
+                        return self.get_latest_assistant_response(user_id)
                     elif run.status == "requires_action":
-                        await self.handle_tool_calls(
+                        self.handle_tool_calls(
                             thread_id, run.id, run.required_action.submit_tool_outputs.tool_calls, user_id
                         )
                     elif run.status in ["failed", "expired", "cancelled"]:
-                        await self.cleanup_active_run(thread_id)
+                        self.cleanup_active_run(thread_id)
                         break
                     
-                    await asyncio.sleep(backoff_interval)
+                    time.sleep(backoff_interval)
                     backoff_interval = min(max_backoff, backoff_interval * 2)  # Exponential backoff
 
                 raise TimeoutError("Conversation run timed out")
@@ -105,13 +103,13 @@ class AssistantManager:
             except Exception as e:
                 if attempt < max_retries - 1:
                     print(f"Attempt {attempt + 1}/{max_retries} failed: {e}")
-                    await asyncio.sleep(retry_delay * (attempt + 1))
+                    time.sleep(retry_delay * (attempt + 1))
                 else:
                     return f"Sorry, I encountered an error: {str(e)}"
 
         return "Failed to complete the conversation after multiple attempts."
     
-    async def handle_tool_calls(self, thread_id: str, run_id: str, tool_calls: List[Dict[Any, Any]], user_id: str) -> None:
+    def handle_tool_calls(self, thread_id: str, run_id: str, tool_calls: List[Dict[Any, Any]], user_id: str) -> None:
         """Handle tool calls with improved error handling."""
         tool_outputs = []
         
@@ -140,29 +138,29 @@ class AssistantManager:
                 })
         
         try:
-            await self.client.beta.threads.runs.submit_tool_outputs(
+            self.client.beta.threads.runs.submit_tool_outputs(
                 thread_id=thread_id,
                 run_id=run_id,
                 tool_outputs=tool_outputs
-            )
+            )  # Synchronous
         except Exception as e:
             print(f"Error submitting tool outputs: {e}")
 
-    async def get_latest_assistant_response(self, user_id: str) -> str:
+    def get_latest_assistant_response(self, user_id: str) -> str:
         """Get the latest assistant response with error handling."""
         thread_id = self.user_threads.get(user_id)
         if not thread_id:
             return "No conversation thread found."
         
         try:
-            messages = await self.client.beta.threads.messages.list(thread_id=thread_id, order="desc", limit=1)
+            messages = self.client.beta.threads.messages.list(thread_id=thread_id, order="desc", limit=1)  # Synchronous
             return next((msg.content[0].text.value for msg in messages if msg.role == "assistant"), "No response from assistant.")
         except Exception as e:
             print(f"Error retrieving assistant response: {e}")
             return "Error retrieving response."
 
 # Test function for basic chatbot interaction
-async def test_chatbot():
+def test_chatbot():
     """Function to test chatbot without any tool integration."""
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
@@ -187,7 +185,7 @@ async def test_chatbot():
             elif not question:
                 continue
             
-            response = await assistant_manager.run_conversation("123", question)
+            response = assistant_manager.run_conversation("123", question)
             print(f"\nAssistant: {response}")
         
         except KeyboardInterrupt:
@@ -197,4 +195,4 @@ async def test_chatbot():
             print("You can continue with your next question or type 'exit' to quit.")
 
 if __name__ == "__main__":
-    asyncio.run(test_chatbot())
+    test_chatbot()
